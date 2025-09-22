@@ -4,18 +4,23 @@ var stdin = std.fs.File.stdin().readerStreaming(&.{});
 fn matchPattern(input_line: []const u8, pattern: []const u8) bool {
     if (pattern.len == 1) {
         return std.mem.indexOf(u8, input_line, pattern) != null;
-    } else {
-        if (std.mem.eql(u8, pattern, "\\d")) {
-            for (input_line) |value| {
-                if (48 <= value and value <= 71) {
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            @panic("Unhandled pattern");
-        }
     }
+    if (std.mem.eql(u8, pattern, "\\d")) {
+        for (input_line) |value| {
+            if (std.ascii.isDigit(value)) {
+                return true;
+            }
+        }
+    } else if (std.mem.eql(u8, pattern, "\\w")) {
+        for (input_line) |value| {
+            if (std.ascii.isAlphanumeric(value) or '_' == value) {
+                return true;
+            }
+        }
+    } else {
+        @panic("Unhandled pattern");
+    }
+    return false;
 }
 
 pub fn main() !void {
