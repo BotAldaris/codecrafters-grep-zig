@@ -5,7 +5,16 @@ fn matchPattern(input_line: []const u8, pattern: []const u8) bool {
     if (pattern.len == 1) {
         return std.mem.indexOf(u8, input_line, pattern) != null;
     } else {
-        @panic("Unhandled pattern");
+        if (std.mem.eql(u8, pattern, "\\d")) {
+            for (input_line) |value| {
+                if (48 <= value and value <= 71) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            @panic("Unhandled pattern");
+        }
     }
 }
 
@@ -23,7 +32,7 @@ pub fn main() !void {
     }
 
     // You can use print statements as follows for debugging, they'll be visible when running tests.
-    std.debug.print("Logs from your program will appear here!\n", .{});
+    // std.debug.print("Logs from your program will appear here!\n", .{});
 
     var input_buffer: [1024]u8 = undefined;
     const input_len = try stdin.read(&input_buffer);
@@ -31,8 +40,10 @@ pub fn main() !void {
 
     const pattern = args[2];
     if (matchPattern(input_slice, pattern)) {
+        std.debug.print("matched", .{});
         std.process.exit(0);
     } else {
+        std.debug.print("fail to match", .{});
         std.process.exit(1);
     }
 }
